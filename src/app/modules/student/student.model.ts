@@ -9,7 +9,6 @@ import {
   TUserName,
 } from './student.interface';
 
-
 const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
@@ -111,11 +110,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'Gender is required.'],
     },
     dateOfBirth: {
-      type: String,
-      validate: {
-        validator: (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value),
-        message: 'Date of Birth must be in the format "YYYY-MM-DD".',
-      },
+      type: Date,
     },
     email: {
       type: String,
@@ -182,8 +177,6 @@ studentSchema.virtual('fullName').get(function () {
   return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
 });
 
-
-
 // Query Middleware
 studentSchema.pre('find', function (next) {
   this.find({ isDeleted: { $ne: true } });
@@ -196,7 +189,6 @@ studentSchema.pre('findOne', function (next) {
 
   next();
 });
-
 
 studentSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
@@ -211,6 +203,5 @@ studentSchema.statics.isUserExists = async function (id: string) {
 
   return existingUser;
 };
-
 
 export const Student = model<TStudent, StudentModel>('Student', studentSchema);
