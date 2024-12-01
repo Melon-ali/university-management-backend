@@ -15,8 +15,8 @@ router.post(
 
 router.get('/', AcademicSemesterControllers.getAllSemesters);
 
-// router.get('/:studentId', StudnetControllers.getSingleStudent);
+router.get('/:semesterId', AcademicSemesterControllers.getSingleSemester);
 
-// router.delete('/:studentId', StudnetControllers.deleteStudent);
+router.patch('/:semesterId', validateRequest(academicsemesterValidation.updateAcademicSemesterValidationSchema), AcademicSemesterControllers.updateAcademicSemester);
 
 export const AcademicSemesterRoutes = router;
