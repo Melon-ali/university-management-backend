@@ -28,4 +28,4 @@ router.patch(
 
 router.get('/', AcademicDepartmentControllers.getAllAcademicDepartments);
 
-export const AcademicFacultyRoutes = router;
+export const AcademicDepartmentRoutes = router;
