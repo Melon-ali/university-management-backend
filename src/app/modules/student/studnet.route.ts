@@ -7,15 +7,15 @@ const router = express.Router();
 
 router.get('/', StudnetControllers.getAllStudents);
 
-router.get('/:studentId', StudnetControllers.getSingleStudent);
+router.get('/:id', StudnetControllers.getSingleStudent);
 
 router.patch(
-  '/:studentId',
+  '/:id',
   validateRequest(updateStudentValidationSchema),
 
   StudnetControllers.updateStudent,
 );
 
-router.delete('/:studentId', StudnetControllers.deleteStudent);
+router.delete('/:id', StudnetControllers.deleteStudent);
 
 export const StudentRoutes = router;
