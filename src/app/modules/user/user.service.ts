@@ -95,6 +95,7 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
 
     // set generated id
     userData.id = await generateFacultyId();
+    console.log(userData.id);
 
     // create a user (transaction-1)
     const newUser = await User.create([userData], { session }); // array
@@ -105,7 +106,7 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
     }
     // set id , _id as user
     payload.id = newUser[0].id;
-    payload.user == newUser[0]._id; // reference _id
+    payload.user = newUser[0]._id; // reference _id
 
     // create a faculty (transaction-2)
 
@@ -153,7 +154,7 @@ const createAdminIntoDB = async (password: string, payload: TFaculty) => {
     }
     // set id , _id as user
     payload.id = newUser[0].id;
-    payload.user == newUser[0]._id; // reference _id
+    payload.user = newUser[0]._id; // reference _id
 
     // create a admin (transaction-2)
 
