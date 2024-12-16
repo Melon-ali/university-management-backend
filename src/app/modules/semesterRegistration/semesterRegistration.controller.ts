@@ -58,7 +58,7 @@ const updateSemesterRegistration = catchAsync(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const result =
-      await SemesterRegistrationService.updateSemesterRegistrationIntoDB(id);
+      await SemesterRegistrationService.updateSemesterRegistrationIntoDB(id, req.body);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
