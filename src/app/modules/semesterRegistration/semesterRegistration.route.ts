@@ -4,7 +4,7 @@ import { SemesterRegistrationController } from './semesterRegistration.controlle
 const router = express.Router();
 
 router.post(
-  '/semester-registrations',
+  '/create-semester-registration',
   SemesterRegistrationController.createSemesterRegistration,
 );
 
