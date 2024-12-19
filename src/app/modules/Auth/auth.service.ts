@@ -28,8 +28,16 @@ const loginUser = async (payload: TLoginUser) => {
 
   // checking if the password is correct
   if (!(await User.isPasswordMatched(payload?.password, user?.password)))
-    // access Granted: Send AccessToken , RefreshToken
+    throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+  
+
+  const isPasswordMatched = await bcrypt.compare(
+    payload?.password,
+    user?.password,
+  );
+  if (!isPasswordMatched) {
     throw new AppError(httpStatus.FORBIDDEN, 'Password do not Matched');
+  }
 
   // create token and sent to the client
 

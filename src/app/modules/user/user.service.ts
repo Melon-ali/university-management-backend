@@ -33,6 +33,10 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     payload.admissionSemester,
   );
 
+  if (!admissionSemester) {
+    throw new AppError(400, 'Admission semester not found');
+  }
+
   const session = await mongoose.startSession();
 
   try {
@@ -45,27 +49,28 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
 
     //create a student
     if (!newUser.length) {
-      throw new AppError(httpStatus.BAD_REWUEST, 'Failed to create user');
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user');
     }
     // set id , _id as user
     payload.id = newUser[0].id;
     payload.user = newUser[0]._id; //reference _id
 
     // create a student (transaction-2)
+
     const newStudent = await Student.create([payload], { session });
 
-    if (!newStudent) {
-      throw new AppError(httpStatus.BAD_REWUEST, 'Failed to create student');
+    if (!newStudent.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student');
     }
 
     await session.commitTransaction();
     await session.endSession();
 
     return newStudent;
-  } catch (error: any) {
+  } catch (err: any) {
     await session.abortTransaction();
     await session.endSession();
-    throw new Error(error);
+    throw new Error(err);
   }
 };
 
@@ -95,7 +100,7 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
 
     // set generated id
     userData.id = await generateFacultyId();
-    console.log(userData.id);
+    // console.log(userData.id);
 
     // create a user (transaction-1)
     const newUser = await User.create([userData], { session }); // array

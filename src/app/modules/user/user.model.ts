@@ -38,15 +38,18 @@ const userSchema = new Schema<TUser, UserModel>(
 );
 
 userSchema.pre('save', async function (next) {
-  // console.log(this, 'pre hook we will save the data');
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this; // doc
   // hasing password and save into DB
+  console.log(user.password);
   user.password = await bcrypt.hash(
     user.password,
     Number(config.bcrypt_salt_rounds),
   );
   next();
 });
+
+
 
 // set '' after saving password
 userSchema.post('save', function (doc, next) {
@@ -55,13 +58,14 @@ userSchema.post('save', function (doc, next) {
 });
 
 userSchema.statics.isUserExistsByCustomId = async function (id: string) {
-  return await User.findOne({ id });
+  return await User.findOne({ id }).select('+password');
 };
 
 userSchema.statics.isPasswordMatched = async function (
   plainTextPassword,
   hashedPassword,
 ) {
+  console.log({plainTextPassword, hashedPassword});
   return await bcrypt.compare(plainTextPassword, hashedPassword);
 };
 
