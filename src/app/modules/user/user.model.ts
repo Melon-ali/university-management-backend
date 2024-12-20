@@ -13,10 +13,14 @@ const userSchema = new Schema<TUser, UserModel>(
     password: {
       type: String,
       required: true,
+      select: 0,
     },
     needsPasswordChange: {
       type: Boolean,
       default: true,
+    },
+    passwordChangedAt: {
+      type: Date,
     },
     role: {
       type: String,
@@ -49,8 +53,6 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-
-
 // set '' after saving password
 userSchema.post('save', function (doc, next) {
   doc.password = '';
@@ -65,7 +67,6 @@ userSchema.statics.isPasswordMatched = async function (
   plainTextPassword,
   hashedPassword,
 ) {
-  console.log({plainTextPassword, hashedPassword});
   return await bcrypt.compare(plainTextPassword, hashedPassword);
 };
 
