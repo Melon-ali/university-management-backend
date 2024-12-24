@@ -8,7 +8,7 @@ const loginUser = catchAsync(async (req, res) => {
   const result = await AuthServices.loginUser(req.body);
   const { refreshToken, accessToken, needsPasswordChage } = result;
 
-  res.cookie('represhToken', refreshToken, {
+  res.cookie('refreshToken', refreshToken, {
     secure: config.NODE_ENV === 'production',
     httpOnly: true,
   });
@@ -41,6 +41,7 @@ const refreshToken = catchAsync(async (req, res) => {
 
   const result = await AuthServices.refreshToken(refreshToken);
 
+  console.log(result);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -49,8 +50,21 @@ const refreshToken = catchAsync(async (req, res) => {
   });
 });
 
+const forgetPassword = catchAsync(async (req, res) => {
+  const userId = req.body.id;
+  const result = await AuthServices.forgetPassword(userId)
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Reset Link is Generated succesfully!',
+    data: result,
+  });
+});
+
 export const AuthControllers = {
   loginUser,
   changePassword,
   refreshToken,
+  forgetPassword,
 };
