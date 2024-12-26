@@ -2,12 +2,12 @@ import mongoose from 'mongoose';
 import { TErrorSources, TGenericErrorResponse } from '../interface/error';
 
 const handleCastError = (
-  error: mongoose.Error.CastError,
+  err: mongoose.Error.CastError,
 ): TGenericErrorResponse => {
   const errorSources: TErrorSources = [
     {
-      path: error.path,
-      message: error.message,
+      path: err.path,
+      message: err.message,
     },
   ];
 
@@ -21,4 +21,3 @@ const handleCastError = (
 };
 
 export default handleCastError;
-

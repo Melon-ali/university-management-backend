@@ -66,7 +66,6 @@ const updateOfferedCourseValidationSchema = z.object({
     ),
 });
 
-
 export const OfferedCourseValidations = {
   createOfferedCourseValidationSchema,
   updateOfferedCourseValidationSchema,

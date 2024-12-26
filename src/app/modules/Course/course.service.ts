@@ -1,10 +1,10 @@
+import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
-import { CourseSearchableFields } from './course.constant';
-import { TCourse, TCourseFaculty } from './course.interface';
-import { Course, CourseFaculty } from './course.model';
 import AppError from '../../errors/AppError';
-import httpStatus from 'http-status';
+import { CourseSearchableFields } from './course.constant';
+import { TCourse, TCoursefaculty } from './course.interface';
+import { Course, CourseFaculty } from './course.model';
 
 const createCourseIntoDB = async (payload: TCourse) => {
   const result = await Course.create(payload);
@@ -13,7 +13,8 @@ const createCourseIntoDB = async (payload: TCourse) => {
 
 const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
   const courseQuery = new QueryBuilder(
-    Course.find().populate('preRequisiteCourses.course'),
+    Course.find(),
+    // .populate('preRequisiteCourses.course'),
     query,
   )
     .search(CourseSearchableFields)
@@ -21,11 +22,12 @@ const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
     .sort()
     .paginate()
     .fields();
+
   const result = await courseQuery.modelQuery;
   return result;
 };
 
-const getSingleCoursesFromDB = async (id: string) => {
+const getSingleCourseFromDB = async (id: string) => {
   const result = await Course.findById(id).populate(
     'preRequisiteCourses.course',
   );
@@ -40,9 +42,8 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
   try {
     session.startTransaction();
 
-    // step1: basic course info update
-
-    const updateBasicCourseInfo = await Course.findByIdAndUpdate(
+    //step1: basic course info update
+    const updatedBasicCourseInfo = await Course.findByIdAndUpdate(
       id,
       courseRemainingData,
       {
@@ -52,7 +53,7 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
       },
     );
 
-    if (!updateBasicCourseInfo) {
+    if (!updatedBasicCourseInfo) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update course');
     }
 
@@ -111,7 +112,8 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
     );
 
     return result;
-  } catch (error) {
+  } catch (err) {
+    console.log(err);
     await session.abortTransaction();
     await session.endSession();
     throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update course');
@@ -122,14 +124,16 @@ const deleteCourseFromDB = async (id: string) => {
   const result = await Course.findByIdAndUpdate(
     id,
     { isDeleted: true },
-    { new: true },
+    {
+      new: true,
+    },
   );
   return result;
 };
 
 const assignFacultiesWithCourseIntoDB = async (
   id: string,
-  payload: Partial<TCourseFaculty>,
+  payload: Partial<TCoursefaculty>,
 ) => {
   const result = await CourseFaculty.findByIdAndUpdate(
     id,
@@ -147,27 +151,26 @@ const assignFacultiesWithCourseIntoDB = async (
 
 const removeFacultiesFromCourseFromDB = async (
   id: string,
-  payload: Partial<TCourseFaculty>,
+  payload: Partial<TCoursefaculty>,
 ) => {
   const result = await CourseFaculty.findByIdAndUpdate(
     id,
     {
-      $pull: {faculties: {$in: payload}}
+      $pull: { faculties: { $in: payload } },
     },
     {
-      upsert: true,
       new: true,
     },
   );
   return result;
 };
 
-export const CoureseServices = {
+export const CourseServices = {
   createCourseIntoDB,
   getAllCoursesFromDB,
-  getSingleCoursesFromDB,
-  deleteCourseFromDB,
+  getSingleCourseFromDB,
   updateCourseIntoDB,
+  deleteCourseFromDB,
   assignFacultiesWithCourseIntoDB,
   removeFacultiesFromCourseFromDB,
 };

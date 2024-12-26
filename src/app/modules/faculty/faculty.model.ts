@@ -1,14 +1,13 @@
-import { model, Schema } from 'mongoose';
-import { FacultyModel, TFaculty, TUserName } from './faculty.interface';
+import { Schema, model } from 'mongoose';
 import { BloodGroup, Gender } from './faculty.constant';
-
+import { FacultyModel, TFaculty, TUserName } from './faculty.interface';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
     required: [true, 'First Name is required'],
     trim: true,
-    maxlength: [20, 'Name can not be more then 20 characters'],
+    maxlength: [20, 'Name can not be more than 20 characters'],
   },
   middleName: {
     type: String,
@@ -31,7 +30,7 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
     },
     user: {
       type: Schema.Types.ObjectId,
-      required: [true, 'User id is requied'],
+      required: [true, 'User id is required'],
       unique: true,
       ref: 'User',
     },
@@ -62,7 +61,7 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
       type: String,
       required: [true, 'Emergency contact number is required'],
     },
-    bloodGroup: {
+    bloogGroup: {
       type: String,
       enum: {
         values: BloodGroup,
@@ -80,7 +79,7 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
     profileImg: { type: String },
     academicDepartment: {
       type: Schema.Types.ObjectId,
-      required: [true, 'Permanent address is required'],
+      required: [true, 'User id is required'],
       ref: 'User',
     },
     isDeleted: {
@@ -94,6 +93,17 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
     },
   },
 );
+
+// generating full name
+facultySchema.virtual('fullName').get(function () {
+  return (
+    this?.name?.firstName +
+    '' +
+    this?.name?.middleName +
+    '' +
+    this?.name?.lastName
+  );
+});
 
 // filter out deleted documents
 facultySchema.pre('find', function (next) {
@@ -111,6 +121,7 @@ facultySchema.pre('aggregate', function (next) {
   next();
 });
 
+//checking if user is already exist!
 facultySchema.statics.isUserExists = async function (id: string) {
   const existingUser = await Faculty.findOne({ id });
   return existingUser;

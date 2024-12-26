@@ -27,7 +27,7 @@ export type TFaculty = {
   email: string;
   contactNo: string;
   emergencyContactNo: string;
-  bloodGroup?: TBloodGroup;
+  bloogGroup?: TBloodGroup;
   presentAddress: string;
   permanentAddress: string;
   profileImg?: string;

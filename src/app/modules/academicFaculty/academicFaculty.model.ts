@@ -1,5 +1,5 @@
+import { Schema, model } from 'mongoose';
 import { TAcademicFaculty } from './academicFaculty.interface';
-import { model, Schema } from 'mongoose';
 
 const academicFacultySchema = new Schema<TAcademicFaculty>(
   {

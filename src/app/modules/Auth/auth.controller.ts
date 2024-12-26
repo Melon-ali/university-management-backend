@@ -1,12 +1,12 @@
 import httpStatus from 'http-status';
+import config from '../../config';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { AuthServices } from './auth.service';
-import config from '../../config';
 
 const loginUser = catchAsync(async (req, res) => {
   const result = await AuthServices.loginUser(req.body);
-  const { refreshToken, accessToken, needsPasswordChage } = result;
+  const { refreshToken, accessToken, needsPasswordChange } = result;
 
   res.cookie('refreshToken', refreshToken, {
     secure: config.NODE_ENV === 'production',
@@ -16,10 +16,10 @@ const loginUser = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'User is Login succesfully',
+    message: 'User is logged in succesfully!',
     data: {
       accessToken,
-      needsPasswordChage,
+      needsPasswordChange,
     },
   });
 });
@@ -38,26 +38,12 @@ const changePassword = catchAsync(async (req, res) => {
 
 const refreshToken = catchAsync(async (req, res) => {
   const { refreshToken } = req.cookies;
-
   const result = await AuthServices.refreshToken(refreshToken);
 
-  console.log(result);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Access token is retrieved succesfully',
-    data: result,
-  });
-});
-
-const forgetPassword = catchAsync(async (req, res) => {
-  const userId = req.body.id;
-  const result = await AuthServices.forgetPassword(userId)
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Reset Link is Generated succesfully!',
+    message: 'Access token is retrieved succesfully!',
     data: result,
   });
 });
@@ -66,5 +52,4 @@ export const AuthControllers = {
   loginUser,
   changePassword,
   refreshToken,
-  forgetPassword,
 };

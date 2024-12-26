@@ -1,8 +1,8 @@
-import { model, Schema } from 'mongoose';
-import { TUser, UserModel } from './user.interface';
-import config from '../../config';
+/* eslint-disable @typescript-eslint/no-this-alias */
 import bcrypt from 'bcrypt';
-
+import { Schema, model } from 'mongoose';
+import config from '../../config';
+import { TUser, UserModel } from './user.interface';
 const userSchema = new Schema<TUser, UserModel>(
   {
     id: {
@@ -44,12 +44,13 @@ const userSchema = new Schema<TUser, UserModel>(
 userSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this; // doc
-  // hasing password and save into DB
-  console.log(user.password);
+  // hashing password and save into DB
+
   user.password = await bcrypt.hash(
     user.password,
     Number(config.bcrypt_salt_rounds),
   );
+
   next();
 });
 
@@ -76,7 +77,6 @@ userSchema.statics.isJWTIssuedBeforePasswordChanged = function (
 ) {
   const passwordChangedTime =
     new Date(passwordChangedTimestamp).getTime() / 1000;
-
   return passwordChangedTime > jwtIssuedTimestamp;
 };
 
