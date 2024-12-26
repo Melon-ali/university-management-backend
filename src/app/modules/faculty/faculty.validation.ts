@@ -49,7 +49,7 @@ export const updateFacultyValidationSchema = z.object({
       email: z.string().email().optional(),
       contactNo: z.string().optional(),
       emergencyContactNo: z.string().optional(),
-      bloogGroup: z.enum([...BloodGroup] as [string, ...string[]]).optional(),
+      bloodGroup: z.enum([...BloodGroup] as [string, ...string[]]).optional(),
       presentAddress: z.string().optional(),
       permanentAddress: z.string().optional(),
       profileImg: z.string().optional(),
