@@ -167,7 +167,6 @@ const refreshToken = async (token: string) => {
 };
 
 const forgetPassword = async (userId: string) => {
-
   // checking if user is exist
   const user = await User.isUserExistsByCustomId(userId);
 
@@ -196,19 +195,19 @@ const forgetPassword = async (userId: string) => {
   const resetToken = createToken(
     jwtPayload,
     config.jwt_access_secret as string,
-    '10m'
+    '10m',
   );
 
-  const resetUILink = `http://localhost:3000?id=${user.id}&token=${resetToken}`;
+  const resetUILink = `${config.reset_pass_ui_link}?id=${user.id}&token=${resetToken}`;
 
-  sendEmail()
+  sendEmail(user.email, resetUILink);
 
   console.log(resetUILink);
-}
+};
 
 export const AuthServices = {
   loginUser,
   changePassword,
   refreshToken,
-  forgetPassword
+  forgetPassword,
 };
