@@ -205,9 +205,35 @@ const forgetPassword = async (userId: string) => {
   console.log(resetUILink);
 };
 
+const resetPassword = async(payload: {id: string, newPassword: string,} token) => {
+  // checking if user is exist
+  const user = await User.isUserExistsByCustomId(payload.id);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found');
+  }
+  // checking if the user is already deleted
+  const isDeleted = user?.isDeleted;
+
+  if (isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted !');
+  }
+
+  // checking if the user is blocked
+  const userStatus = user?.status;
+
+  if (userStatus === 'blocked') {
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked !');
+  }
+}
+
 export const AuthServices = {
   loginUser,
   changePassword,
   refreshToken,
   forgetPassword,
+  resetPassword
 };
+
+
+// http://localhost:3000?id=A-0001&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJBLTAwMDEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzUyMTE2NTcsImV4cCI6MTczNTIxMjI1N30.p36z5lKHHCgKCfYCuUSnWkQTKHYCm6XUGHsg2LHGmN0
